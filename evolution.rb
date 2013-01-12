@@ -34,7 +34,7 @@ class Evolution
   def crossover
     @population += @crossover.times.map do
       pos = rand(@length)
-      first, second = 2.times.map { @population[rand(@population.length)][:value] }
+      first, second = 2.times.map{ @population[rand(@population.length)][:value] }
       firstmap = (1<<@length)-(1<<pos)
       secondmap = (1<<pos)-1
       value = (first & firstmap) + (second & secondmap)
@@ -64,10 +64,10 @@ class Evolution
     crossover
     mutation
     # Compute selection order based on fitness
-    p = @population.map { |i| [i, i[:fitness] * (1 - @selection + rand * @selection) ] }
+    p = @population.map{ |i| [i, i[:fitness] * (1 - @selection + rand * @selection) ] }
     # Select next generation: fitter individuals (lower fitness number)
     # will be selected with higher propability  
-    @population = p.sort { |a,b| a[1] <=> b[1] }[0..@size].map {|i, o| i}
+    @population = p.sort{ |a,b| a[1] <=> b[1] }[0..@size].map{|i, o| i}
   end
   
   def iterate(options)
@@ -80,7 +80,7 @@ class Evolution
     start
     i = 0
     while i < n do
-      return if fitness and @population.any? { |i| i[:fitness] <= fitness }
+      return if fitness and @population.any?{ |i| i[:fitness] <= fitness }
       step
       i += 1
     end
@@ -88,6 +88,6 @@ class Evolution
   
   def bear(value)
     fitness = @fitness.call(value)
-    {:value => value, :fitness => fitness}
+   {:value => value, :fitness => fitness}
   end
 end
