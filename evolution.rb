@@ -48,7 +48,7 @@ class Evolution
   def mutation
     @population += @mutation.times.map do
       mask = 0
-      0.upto(@length) do |i|
+      0.upto(@length-1) do |i|
         mask += 1<<i if rand < @flip
       end
       individual = @population[rand(@population.length)][:value]
