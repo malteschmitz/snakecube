@@ -37,7 +37,9 @@ class Evolution
       first, second = 2.times.map { @population[rand(@population.length)][:value] }
       firstmap = (1<<@length)-(1<<pos)
       secondmap = (1<<pos)-1
-      bear((first & firstmap) + (second & secondmap))
+      value = (first & firstmap) + (second & secondmap)
+      # puts ("%.#{@length}b" % first) + ' cross(' + ("%5i" % pos) + ') ' + ("%.#{@length}b" % second) + ' --> ' + ("%.#{@length}b" % value)
+      bear(value)
     end
   end
   
@@ -50,7 +52,9 @@ class Evolution
         mask += 1<<i if rand < @flip
       end
       individual = @population[rand(@population.length)][:value]
-      bear(individual ^ mask)
+      value = individual ^ mask
+      # puts ("%.#{@length}b" % individual) + ' xor          ' + ("%.#{@length}b" % mask) + ' --> ' + ("%.#{@length}b" % value)
+      bear(value)
     end
   end
   
