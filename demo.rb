@@ -20,12 +20,12 @@ def snake_to_string(length, value)
   configuration = "%.#{length}b" % value
   directions = ['R', 'L']
   direction = 0
-  snake = @snake_static
+  snake = String.new(@snake_static)
   
   while snake.include?'X' do
     i = snake.index('X')
     snake.slice!(i)
-    if(configuration.slice(0) != '0')
+    if configuration.slice!(0) == "1"
       direction = 1-direction
     end
     snake.insert(i, directions[direction])
