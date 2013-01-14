@@ -22,7 +22,7 @@ build_board = lambda do |snake|
   min_x = snake.length
   min_y = snake.length
   
-  board[y][x] = 1
+  board[y][x] = 2
   snake.each_char do |c|
     if c == 'R'
       tmp = dir_x
@@ -123,10 +123,9 @@ fitness_b = lambda do |value|
     
     #puts board.map{|x| x.join("")}.join("\n")
     
-    sum = 0
-    board.each{ |row| row.each { |x| sum += x } }
-    
-    holes = width*height - sum
+    holes = 0
+    board.each{ |row| row.each { |x| sum += x == 0 ? 1 : 0 } }
+
     if holes == 0
       return Float::INFINITY
     else
@@ -140,21 +139,36 @@ end
 e = Evolution.new({
   :length => length,
   :fitness => fitness_a,
-  :size => 10,
+  :size => 15,
   :crossover => 5,
-  :mutation => 5,
-  :flip => 0.1,
-  :selection => 0
+  :mutation => 15,
+  :flip => 0.3,
+  :selection => 1
 })
 
 e.iterate({
-  :n => 100,
-  :fitness => 0
+  :n => 10000,
+  :fitness => 9
 })
 
-puts e.population.map{|i| i[:fitness].to_s + "  " + i[:value].to_s}.join("\n")
+puts e.population.map{|i| "%f\t%.#{length}b" % [i[:fitness], i[:value]] }.join("\n")
 
-optimum = e.population.min_by{|i| i[:fitness]}
+optimum = e.population.first
 optimal_snake = snake_to_string.call(length, optimum[:value])
 puts optimal_snake
 puts build_board.call(optimal_snake).map{|x| x.join("")}.join("\n")
+puts e.iterations
+
+=begin
+# print all possible fitness values for fitness_a
+all = {}
+0.upto(2**length-1) do |value|
+  fitness = fitness_a.call(value)
+  if fitness < Float::INFINITY
+    individual = {:fitness => fitness, :value => value}
+    all[fitness] = individual unless all.has_key?(fitness)
+  end
+end
+a = all.values.sort { |a,b| a[:fitness] <=> b[:fitness] }
+a.each { |i| puts "%f\t%.#{length}b" % [i[:fitness], i[:value]] }
+=end
