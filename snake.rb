@@ -148,16 +148,27 @@ e = Evolution.new({
 
 e.iterate({
   :n => 10000,
-  :fitness => 9
+  :fitness => 9,
+  :logging => true
 })
 
-puts e.population.map{|i| "%f\t%.#{length}b" % [i[:fitness], i[:value]] }.join("\n")
+print_individual = lambda do |i|
+  snake = snake_to_string.call(length, i[:value])
+  puts "%f\t%.#{length}b\t%s" % [i[:fitness], i[:value], snake]
+end
 
-optimum = e.population.first
-optimal_snake = snake_to_string.call(length, optimum[:value])
-puts optimal_snake
-puts build_board.call(optimal_snake).map{|x| x.join("")}.join("\n")
-puts e.iterations
+puts "number of iterations:\n#{e.iterations}\n\n"
+puts 'final population:'
+e.population.each { |i| print_individual.call(i) }
+puts ''
+puts 'all fitnesses:'
+e.individuals.each { |i| print_individual.call(i) }
+puts ''
+puts 'fittest individual:'
+opt = e.population.first
+puts print_individual.call(opt)
+board = build_board.call(snake_to_string.call(length, opt[:value]))
+puts board.map{|x| x.join("")}.join("\n")
 
 =begin
 # print all possible fitness values for fitness_a

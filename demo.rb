@@ -24,7 +24,8 @@ e = Evolution.new({
 
 e.iterate({
   :n => 100,
-  :fitness => 0
+  :fitness => 0,
+  :logging => true
 })
 
 puts 'number of iterations: ' + e.iterations.to_s
@@ -32,5 +33,5 @@ puts ''
 puts 'final population:'
 puts e.population.map{|i| i[:fitness].to_s + "\t" + i[:value].to_s + "\t" + "%.#{length}b" % i[:value]}.join("\n")
 puts ''
-puts 'all individuals created:'
+puts 'all fitnesses created:'
 puts e.individuals.map{|i| i[:fitness].to_s + "\t" + i[:value].to_s + "\t" + "%.#{length}b" % i[:value]}.join("\n")
