@@ -9,10 +9,10 @@ length = snake_static.count("X")
 build_board = lambda do |snake|
   # build board (2d array with n times n size, where n = 2*snake.length + 1)
   board = []
-  (2*snake.length+1).times do
-    board << Array.new(2*snake.length+1, 0)
+  (2 * snake.length + 1).times do
+    board << Array.new(2 * snake.length + 1, 0)
   end
-  
+
   x = snake.length
   y = snake.length
   dir_x = 1
@@ -21,7 +21,7 @@ build_board = lambda do |snake|
   max_y = snake.length
   min_x = snake.length
   min_y = snake.length
-  
+
   board[y][x] = 2
   snake.each_char do |c|
     if c == 'R'
@@ -33,35 +33,33 @@ build_board = lambda do |snake|
       dir_x = dir_y
       dir_y = -tmp
     end
-      
+
     x += dir_x
     y += dir_y
-    if board[y][x] != 0
-      return nil
-    end
+    return nil if board[y][x] != 0
     board[y][x] = 1
-    
+
     max_x = x if x > max_x
     min_x = x if x < min_x
     max_y = y if y > max_y
     min_y = y if y < min_y
   end
-  
+
   minimized_board = []
   (max_y - min_y + 1).times do
     minimized_board << Array.new(max_x - min_x + 1, 0)
   end
-  
+
   min_y.upto(max_y) do |y|
     min_x.upto(max_x) do |x|
       minimized_board[y-min_y][x-min_x] = board[y][x]
     end
   end
-  
-  return minimized_board
+
+  minimized_board
 end
 
-snake_to_string = lambda do |length, value|
+snake_to_string = lambda do |value|
   configuration = ("%.#{length}b" % value).reverse.split("")
   directions = ['R', 'L']
   direction = 0
@@ -70,19 +68,19 @@ snake_to_string = lambda do |length, value|
   snake.each_with_index do |c, i|
     if c == 'X'
       if configuration.pop == '1'
-        direction = 1 - direction
+      direction = 1 - direction
       end
-      snake[i] = directions[direction]
+    snake[i] = directions[direction]
     end
   end
-  
+
   snake.join("")
 end
 
 flood_fill = lambda do |board, x, y|
   if board[y] && board[y][x] == 0
     board[y][x] = 1
-    
+
     flood_fill(board, x+1, y)
     flood_fill(board, x, y+1)
     flood_fill(board, x-1, y)
@@ -94,46 +92,35 @@ end
 # (the lower the number, the fitter the bitvector)
 
 fitness_a = lambda do |value|
-  snake = snake_to_string.call(length, value)
+  snake = snake_to_string.call(value)
   board = build_board.call(snake)
-  
-  if board != nil
-    width = board[0].length
-    height = board.length
-  
-    return Math.sqrt(width*width + height*height)
-  else
-    return Float::INFINITY
-  end
+
+  return Float::INFINITY unless board
+
+  width = board[0].length
+  height = board.length
+  Math.sqrt(width*width + height*height)
 end
 
 fitness_b = lambda do |value|
-  snake = snake_to_string.call(length, value)
+  snake = snake_to_string.call(value)
   board = build_board.call(snake)
-  
-  if board != nil
-  
-    width = board[0].length
-    height = board.length
-       
-    1.upto(width-1) { |x| flood_fill(board, x, 0) }
-    1.upto(height-1) { |y| flood_fill(board, width-1, y) }
-    (width-2).downto(0) { |x| flood_fill(board, x, height-1) }
-    (height-2).downto(0) { |y| flood_fill(board, 0, y) }
-    
-    #puts board.map{|x| x.join("")}.join("\n")
-    
-    holes = 0
-    board.each{ |row| row.each { |x| sum += x == 0 ? 1 : 0 } }
 
-    if holes == 0
-      return Float::INFINITY
-    else
-      return holes
-    end
-  else
-    return Float::INFINITY
-  end
+  return Float::INFINITY unless board
+
+  width = board[0].length
+  height = board.length
+
+  1.upto(width-1) { |x| flood_fill(board, x, 0) }
+  1.upto(height-1) { |y| flood_fill(board, width-1, y) }
+  (width-2).downto(0) { |x| flood_fill(board, x, height-1) }
+  (height-2).downto(0) { |y| flood_fill(board, 0, y) }
+
+  holes = 0
+  board.each{ |row| row.each { |x| sum += x == 0 ? 1 : 0 } }
+
+  holes = Float::INFINITY if holes == 0
+  holes
 end
 
 e = Evolution.new({
@@ -153,7 +140,7 @@ e.iterate({
 })
 
 print_individual = lambda do |i|
-  snake = snake_to_string.call(length, i[:value])
+  snake = snake_to_string.call(i[:value])
   puts "%f\t%.#{length}b\t%s" % [i[:fitness], i[:value], snake]
 end
 
@@ -167,7 +154,7 @@ puts ''
 puts 'fittest individual:'
 opt = e.population.first
 puts print_individual.call(opt)
-board = build_board.call(snake_to_string.call(length, opt[:value]))
+board = build_board.call(snake_to_string.call(opt[:value]))
 puts board.map{|x| x.join("")}.join("\n")
 
 =begin
