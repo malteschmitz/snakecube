@@ -88,10 +88,10 @@ flood_fill = lambda do |board, x, y|
   end
 end
 
-# fitness function that returns fitness of a bitvector
+# energy function that returns energy of a bitvector
 # (the lower the number, the fitter the bitvector)
 
-fitness_a = lambda do |value|
+energy_a = lambda do |value|
   snake = snake_to_string.call(value)
   board = build_board.call(snake)
 
@@ -102,7 +102,7 @@ fitness_a = lambda do |value|
   Math.sqrt(width*width + height*height)
 end
 
-fitness_b = lambda do |value|
+energy_b = lambda do |value|
   snake = snake_to_string.call(value)
   board = build_board.call(snake)
 
@@ -123,7 +123,7 @@ end
 
 e = Evolution.new({
   :length => length,
-  :fitness => fitness_b,
+  :energy => energy_b,
   :size => 15,
   :crossover => 5,
   :mutation => 15,
@@ -133,20 +133,20 @@ e = Evolution.new({
 
 e.iterate({
   :n => 10000,
-  :fitness => 1,  # use 9 for fitness_a and 1 for fitness_b
+  :energy => 1,  # use 9 for energy_a and 1 for energy_b
   :logging => true
 })
 
 print_individual = lambda do |i|
   snake = snake_to_string.call(i[:value])
-  puts "%f\t%.#{length}b\t%s" % [i[:fitness], i[:value], snake]
+  puts "%f\t%.#{length}b\t%s" % [i[:energy], i[:value], snake]
 end
 
 puts "number of iterations:\n#{e.iterations}\n\n"
 puts 'final population:'
 e.population.each { |i| print_individual.call(i) }
 puts ''
-puts 'all fitnesses:'
+puts 'all energies:'
 e.individuals.each { |i| print_individual.call(i) }
 puts ''
 puts 'fittest individual:'
@@ -156,15 +156,15 @@ board = build_board.call(snake_to_string.call(opt[:value]))
 puts board.map{|x| x.join("")}.join("\n")
 
 =begin
-# print all possible fitness values for fitness_a
+# print all possible energy values for energy_a
 all = {}
 0.upto(2**length-1) do |value|
-  fitness = fitness_a.call(value)
-  if fitness < Float::INFINITY
-    individual = {:fitness => fitness, :value => value}
-    all[fitness] = individual unless all.has_key?(fitness)
+  energy = energy_a.call(value)
+  if energy < Float::INFINITY
+    individual = {:energy => energy, :value => value}
+    all[energy] = individual unless all.has_key?(energy)
   end
 end
-a = all.values.sort { |a,b| a[:fitness] <=> b[:fitness] }
-a.each { |i| puts "%f\t%.#{length}b" % [i[:fitness], i[:value]] }
+a = all.values.sort { |a,b| a[:energy] <=> b[:energy] }
+a.each { |i| puts "%f\t%.#{length}b" % [i[:energy], i[:value]] }
 =end

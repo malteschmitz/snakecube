@@ -4,21 +4,21 @@ class Evolution
   attr_reader :iterations
 
   def population
-    @population.sort{ |a,b| a[:fitness] <=> b[:fitness] }
+    @population.sort{ |a,b| a[:energy] <=> b[:energy] }
   end
   
-  # returns a list of individuals that were born first with its fitness
+  # returns a list of individuals that were born first with its energy
   def individuals
-    @log.values.sort{ |a,b| a[:fitness] <=> b[:fitness] }
+    @log.values.sort{ |a,b| a[:energy] <=> b[:energy] }
   end
   
   def initialize(options)
     # fix length of the bitvectors generated as individuals in the population
     @length = options[:length]
-    # fitness function that retrieves such a bitvector (a number representing
-    # a vector of bits and returns a number as fitness indicator -- lower values
+    # energy function that retrieves such a bitvector (a number representing
+    # a vector of bits and returns a number as energy indicator -- lower energy
     # corresponds to fitter individuals)
-    @fitness = options[:fitness]
+    @energy = options[:energy]
     # size of the pupulation (this number of individuals will be generated
     # in the initial random generation and will be keept in the selection step)
     @size = options[:size] || 100
@@ -74,26 +74,26 @@ class Evolution
   def step
     crossover
     mutation
-    # Compute selection order based on fitness
-    p = @population.map{ |i| [i, i[:fitness] * (1 - @selection + rand * @selection) ] }
-    # Select next generation: fitter individuals (lower fitness number)
+    # Compute selection order based on energy
+    p = @population.map{ |i| [i, i[:energy] * (1 - @selection + rand * @selection) ] }
+    # Select next generation: fitter individuals (lower energy number)
     # will be selected with higher propability  
     @population = p.sort{ |a,b| a[1] <=> b[1] }[0..@size].map{|i, o| i}
   end
   
   def iterate(options)
-    # enable logging (needed to get all individuals with different fitness)
+    # enable logging (needed to get all individuals with different energy)
     @logging = options[:logging]
     # number of iterations
     n = options[:n] || 100
-    # target fitness: stop iteration if an individual with fitness lower than
+    # target energy: stop iteration if an individual with energy lower than
     # this exists in the population
-    fitness = options[:fitness]
+    energy = options[:energy]
     # actual iteration
     start
     i = 0
     while i < n do
-      return @iterations = i if fitness and @population.any?{ |i| i[:fitness] <= fitness }
+      return @iterations = i if energy and @population.any?{ |i| i[:energy] <= energy }
       step
       i += 1
     end
@@ -101,9 +101,9 @@ class Evolution
   end
   
   def bear(value)
-    fitness = @fitness.call(value)
-    individual = {:value => value, :fitness => fitness}
-    @log[fitness] = individual unless @log.has_key?(fitness) if @logging
+    energy = @energy.call(value)
+    individual = {:value => value, :energy => energy}
+    @log[energy] = individual unless @log.has_key?(energy) if @logging
     individual
   end
 end
