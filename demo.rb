@@ -1,10 +1,10 @@
 require_relative "evolution"
 
 # base string of snake
-@snake_static = "IXIIXIXXIXIXIXXIIXIXIXXIIXIXXIXIIXIXIIXXXIXIIXIXIXIIXIXXIIXIXI"
+@snake_static = "IIXXXIXXIXXXIXIXXXXIXIXIXII"
 
 # number of bits in the bitvector
-length = 30
+length = @snake_static.count("X")
 
 # fitness function that returns fitness of a bitvector
 # (the lower the number, the fitter the bitvector)
@@ -146,12 +146,12 @@ end
 
 e = Evolution.new({
   :length => length,
-  :fitness => fitness_b,
+  :fitness => fitness_a,
   :size => 10,
   :crossover => 5,
   :mutation => 5,
   :flip => 0.1,
-  :selection => 0.5
+  :selection => 0
 })
 
 e.iterate({
