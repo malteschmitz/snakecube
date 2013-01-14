@@ -17,11 +17,22 @@ fitness = lambda do |value|
 end
 
 def snake_to_string(length, value)
-  configuration = "%.#{length}b" % value
+  configuration = ("%.#{length}b" % value).reverse.split("")
   directions = ['R', 'L']
   direction = 0
-  snake = String.new(@snake_static)
+  snake = @snake_static.split("")
+
+  snake.each_with_index do |c, i|
+    if c == 'X'
+      if configuration.pop == '1'
+        direction = 1 - direction
+      end
+      snake[i] = directions[direction]
+    end
+  end
   
+  snake.join("")
+=begin
   while snake.include?'X' do
     i = snake.index('X')
     snake.slice!(i)
@@ -32,6 +43,7 @@ def snake_to_string(length, value)
   end
   
   return snake
+=end
 end
 
 e = Evolution.new({
