@@ -1,4 +1,5 @@
 require_relative "evolution"
+require_relative "point"
 
 # base string of snake
 snake_static = "IIXXXIXXIXXXIXIXXXXIXIXIXII"
@@ -13,46 +14,28 @@ build_board = lambda do |snake|
     board << Array.new(2 * snake.length + 1, ' ')
   end
 
-  x = snake.length
-  y = snake.length
-  dir_x = 1
-  dir_y = 0
-  max_x = x
-  max_y = y
-  min_x = x
-  min_y = y
+  p = Point.new(snake.length, snake.length)
+  dir = Point.new(1,0)
+  max = p.dup
+  min = p.dup
 
-  board[y][x] = 'X'
+  board[p.y][p.x] = 'X'
   snake.each_char do |c|
-    if c == 'R'
-      tmp = dir_x
-      dir_x = -dir_y
-      dir_y = tmp
-    elsif c == 'L'
-      tmp = dir_x
-      dir_x = dir_y
-      dir_y = -tmp
-    end
+    dir.rotate!(c)
 
-    x += dir_x
-    y += dir_y
-    return nil if board[y][x] != ' '
-    board[y][x] = 'x'
+    p += dir
+    return nil if board[p.y][p.x] != ' '
+    board[p.y][p.x] = 'x'
 
-    max_x = x if x > max_x
-    min_x = x if x < min_x
-    max_y = y if y > max_y
-    min_y = y if y < min_y
+    max = Point.max(max, p)
+    min = Point.min(min, p)
   end
 
   minimized_board = []
-  (max_y - min_y + 1).times do
-    minimized_board << Array.new(max_x - min_x + 1, 0)
-  end
-
-  min_y.upto(max_y) do |y|
-    min_x.upto(max_x) do |x|
-      minimized_board[y-min_y][x-min_x] = board[y][x]
+  min.y.upto(max.y) do |y|
+    minimized_board[y - min.y] = []
+    min.x.upto(max.x) do |x|
+      minimized_board[y - min.y][x - min.x] = board[y][x]
     end
   end
 
