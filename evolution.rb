@@ -1,6 +1,17 @@
 class Evolution
 
-  attr_reader :population
+  # number of iterations done
+  attr_reader :iterations
+
+  def population
+    @population.sort{ |a,b| a[:fitness] <=> b[:fitness] }
+  end
+  
+  def individuals
+    @log.uniq.sort{ |a,b| a[:fitness] <=> b[:fitness] }
+  end
+  
+  attr_reader :log
   
   def initialize(options)
     # fix length of the bitvectors generated as individuals in the population
@@ -24,6 +35,7 @@ class Evolution
   
   # Generate the initial population of individuals randomly - first Generation
   def start
+    @log = []
     @population = @size.times.map do
       bear(rand(1<<@length))
     end
@@ -80,14 +92,17 @@ class Evolution
     start
     i = 0
     while i < n do
-      return if fitness and @population.any?{ |i| i[:fitness] <= fitness }
+      return @iterations = i if fitness and @population.any?{ |i| i[:fitness] <= fitness }
       step
       i += 1
     end
+    return @iterations = i
   end
   
   def bear(value)
     fitness = @fitness.call(value)
-   {:value => value, :fitness => fitness}
+    individual = {:value => value, :fitness => fitness}
+    @log << individual
+    individual
   end
 end
