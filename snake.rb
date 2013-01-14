@@ -10,7 +10,7 @@ build_board = lambda do |snake|
   # build board (2d array with n times n size, where n = 2*snake.length + 1)
   board = []
   (2 * snake.length + 1).times do
-    board << Array.new(2 * snake.length + 1, 0)
+    board << Array.new(2 * snake.length + 1, ' ')
   end
 
   x = snake.length
@@ -22,7 +22,7 @@ build_board = lambda do |snake|
   min_x = snake.length
   min_y = snake.length
 
-  board[y][x] = 2
+  board[y][x] = 'X'
   snake.each_char do |c|
     if c == 'R'
       tmp = dir_x
@@ -36,8 +36,8 @@ build_board = lambda do |snake|
 
     x += dir_x
     y += dir_y
-    return nil if board[y][x] != 0
-    board[y][x] = 1
+    return nil if board[y][x] != ' '
+    board[y][x] = 'x'
 
     max_x = x if x > max_x
     min_x = x if x < min_x
@@ -78,13 +78,13 @@ snake_to_string = lambda do |value|
 end
 
 flood_fill = lambda do |board, x, y|
-  if board[y] && board[y][x] == 0
-    board[y][x] = 1
+  if board[y] && board[y][x] == ' '
+    board[y][x] = 'o'
 
-    flood_fill(board, x+1, y)
-    flood_fill(board, x, y+1)
-    flood_fill(board, x-1, y)
-    flood_fill(board, x, y-1)
+    flood_fill.call(board, x+1, y)
+    flood_fill.call(board, x, y+1)
+    flood_fill.call(board, x-1, y)
+    flood_fill.call(board, x, y-1)
   end
 end
 
@@ -111,21 +111,19 @@ fitness_b = lambda do |value|
   width = board[0].length
   height = board.length
 
-  1.upto(width-1) { |x| flood_fill(board, x, 0) }
-  1.upto(height-1) { |y| flood_fill(board, width-1, y) }
-  (width-2).downto(0) { |x| flood_fill(board, x, height-1) }
-  (height-2).downto(0) { |y| flood_fill(board, 0, y) }
+  1.upto(width-1) { |x| flood_fill.call(board, x, 0) }
+  1.upto(height-1) { |y| flood_fill.call(board, width-1, y) }
+  (width-2).downto(0) { |x| flood_fill.call(board, x, height-1) }
+  (height-2).downto(0) { |y| flood_fill.call(board, 0, y) }
 
-  holes = 0
-  board.each{ |row| row.each { |x| sum += x == 0 ? 1 : 0 } }
-
+  holes = board.map { |x| x.join('') }.join('').count(' ')
   holes = Float::INFINITY if holes == 0
   holes
 end
 
 e = Evolution.new({
   :length => length,
-  :fitness => fitness_a,
+  :fitness => fitness_b,
   :size => 15,
   :crossover => 5,
   :mutation => 15,
@@ -135,7 +133,7 @@ e = Evolution.new({
 
 e.iterate({
   :n => 10000,
-  :fitness => 9,
+  :fitness => 1,  # use 9 for fitness_a and 1 for fitness_b
   :logging => true
 })
 
