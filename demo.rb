@@ -18,25 +18,20 @@ end
 
 def snake_to_string(length, value)
   configuration = "%.#{length}b" % value
-  last_direction = 'R'
-  config_index = 0
-  result = ""
-  @snake_static.each_char do |c|
-    if c != 'X'
-      result << c
-    else
-      if configuration[config_index] != '0'
-        if last_direction == 'R'
-          last_direction = 'L'
-        else
-          last_direction = 'R'
-        end
-      end
-      result << last_direction
-      config_index += 1
+  directions = ['R', 'L']
+  direction = 0
+  snake = @snake_static
+  
+  while snake.include?'X' do
+    i = snake.index('X')
+    snake.slice!(i)
+    if(configuration.slice(0) != '0')
+      direction = 1-direction
     end
+    snake.insert(i, directions[direction])
   end
-  result
+  
+  return snake
 end
 
 e = Evolution.new({
