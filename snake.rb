@@ -17,10 +17,10 @@ build_board = lambda do |snake|
   y = snake.length
   dir_x = 1
   dir_y = 0
-  max_x = snake.length
-  max_y = snake.length
-  min_x = snake.length
-  min_y = snake.length
+  max_x = x
+  max_y = y
+  min_x = x
+  min_y = y
 
   board[y][x] = 'X'
   snake.each_char do |c|
