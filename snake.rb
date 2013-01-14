@@ -19,17 +19,21 @@ build_board = lambda do |snake|
   max = p.dup
   min = p.dup
 
-  board[p.y][p.x] = 'X'
   snake.each_char do |c|
-    dir.rotate!(c)
-
-    p += dir
+    # exit if current position is not blank
     return nil if board[p.y][p.x] != ' '
-    board[p.y][p.x] = 'x'
-
+    # set current position
+    board[p.y][p.x] = c
+    # compute next position
+    dir.rotate!(c)
+    p += dir
+    # update min and max
     max = Point.max(max, p)
     min = Point.min(min, p)
-  end
+  end  
+  #set last position
+  return nil if board[p.y][p.x] != ' '
+  board[p.y][p.x] = 'X'
 
   minimized_board = []
   min.y.upto(max.y) do |y|
