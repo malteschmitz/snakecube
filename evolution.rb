@@ -29,7 +29,7 @@ class Evolution
     @mutation = options[:mutation] || 100
     # propability to flip a bit during mutation
     @flip = options[:flip] || 0.1
-    # randomness of selection (1 = fully random, 0 = fully by fitness)
+    # randomness of selection (1 = maximal randomness, 0 = fully deterministic)
     @selection = options[:selection] || 0.5
   end
   
