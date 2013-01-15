@@ -108,9 +108,16 @@ energy_b = lambda do |value|
   holes
 end
 
+# energy function which uses energy_b to maximize the holes
+energy_c = lambda do |value|
+  e_b = energy_b.call(value)
+  return 0 if e_b == Float::INFINITY
+  -e_b
+end
+
 e = Evolution.new({
   :length => length,
-  :energy => energy_b,
+  :energy => energy_c,
   :size => 15,
   :crossover => 5,
   :mutation => 15,
@@ -120,7 +127,7 @@ e = Evolution.new({
 
 e.iterate({
   :n => 10000,
-  :energy => 1,  # use 9 for energy_a and 1 for energy_b
+  :energy => -15,  # use 9 for energy_a, 1 for energy_b and -15 for energy_c
   :logging => true
 })
 
