@@ -5,7 +5,7 @@ snake = Snake.new("IIXXXIXXIXXXIXIXXXXIXIXIXII")
 
 e = Evolution.new({
   :length => snake.length,
-  :energy => snake.energy_a,
+  :energy => snake.energy_c,
   :size => 15,
   :crossover => 5,
   :mutation => 15,
@@ -15,7 +15,7 @@ e = Evolution.new({
 
 e.iterate({
   :n => 10000,
-  :energy => 9,  # use 9 for energy_a, 1 for energy_b and -15 for energy_c
+  :energy => -15,  # use 9 for energy_a, 1 for energy_b and -15 for energy_c
   :logging => true
 })
 
@@ -28,11 +28,12 @@ puts "number of iterations:\n#{e.iterations}\n\n"
 puts 'final population:'
 e.population.each { |i| print_individual.call(i) }
 puts ''
-puts 'all energies:'
+puts 'all energies and first found individual with that energy:'
 e.individuals.each { |i| print_individual.call(i) }
 puts ''
-puts 'fittest individual:'
+puts 'fittest individual in final population:'
 opt = e.population.first
-puts print_individual.call(opt)
+print_individual.call(opt)
 board = snake.to_board.call(snake.to_string.call(opt[:value]))
+puts ''
 puts board.map{|x| x.join("")}.join("\n")
