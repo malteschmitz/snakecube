@@ -1,300 +1,364 @@
-\documentclass[a4paper,10pt,fleqn]{scrartcl}
+\documentclass[parskip=half,paper=a4]{scrartcl}
+
+\usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
-\usepackage{amssymb}
-%\usepackage{stmaryrd}				% Widerspruchssymbol (Blitz --> \lightning)
-\usepackage{amsmath}				% mathematische Symbole
-\usepackage{amsfonts}
-\usepackage{wasysym}				% mehr Symbole
-\usepackage[a4paper]{geometry}		% weniger Raender
-\geometry{	a4paper,
-			tmargin=2.5cm, 
-			bmargin=3cm, 
-			lmargin=2.5cm, 
-			rmargin=1.5cm, 
-			headheight=4em, 
-			headsep=1em, 
-			footskip=1cm	}
-\usepackage[utf8]{inputenc}		% fï¿½r Windows statt >applemac< >utf8< oder >ansinew< einsetzen
-\usepackage[T1]{fontenc}			%Fï¿½r Windows Kommentar entfernen
-\usepackage{footmisc}				% Fussnoten
-\usepackage{enumerate,enumitem} 		% schoenere Aufzaehlungen
-\usepackage{setspace} 				% Zeilenabstand
-\singlespacing           					% 1-zeilig (Standard) 
-%\onehalfspacing          					% 1,5-zeilig 
-%\doublespacing     						% 2-zeilig 
-\usepackage{ulem}					% mehr Moeglichkeiten zum Unterstreichen (z.B.: \uline{}, \uuline{}, \uwave{})
-\usepackage{tikz}					% Graphen / Automaten
-\usetikzlibrary{matrix,%
-                positioning,%
-                arrows,%
-                snakes}					% Schlangenlinien (z.B.: snake=bumps)
-\usepackage{graphicx}				% Bilder
-\usepackage{polynom}			%polynomdivision
-\usepackage{xcolor}					% Farben
-\definecolor{grey}{HTML}{CFCFCF}	% dunkleres grau
-\definecolor{grey91}{HTML}{E8E8E8}	% helleres grau
-\definecolor{darkblue}{rgb}{0,0,0}		% Ein paar Standardfarben
-\definecolor{darkred}{rgb}{.6,0,0}
-\definecolor{darkgreen}{rgb}{0,.6,0}
-\definecolor{red}{rgb}{.98,0,0}
-\usepackage{tabularx}				% Tabellen
-\usepackage{parcolumns}				% Spalten
-\usepackage{listings}				% Quellcode einbinden
-\lstset{	language=Java,			% Quellcode-Einstellungen ; Sprache waehlen
-		showstringspaces=false,		% Leerzeichen nicht extra kenntlich machen
-		numbers=left,				% Zeilennummerierung
-		numberstyle=\tiny,			% kleine Zahlen fï¿½r die Nummerierung
-		breaklines=true,			% Zeilenumbruch
-		commentstyle=\color{orange}	% orange-farbende Kommentare
-		}
-%\usepackage{algpseudocode}			% Pseudo-Code ( \For, \EndFor, \While, \EndWhile )
-%\usepackage[curves]{struktex}			% Struktogramme
-\input{syntax.tex}					% Syntax-Diagramme
-\usepackage{fancybox}
-\usepackage[	colorlinks=true,			% HTML-Code
-			linkcolor=blue]{hyperref}		% Farbe
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%-------------------------- \section{} erweitern -------------------------------------------%
-\addtokomafont{section}{\color{darkblue}\hspace*{-.5cm}}
-%-------------------------- \subsection{} erweitern --------------------------------------%
-\addtokomafont{subsection}{\color{darkblue}}
-%-------------------------- \subsubsection{} erweitern ---------------------------------%
-\addtokomafont{subsubsection}{\color{darkblue}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Kopf- und Fuï¿½zeilendefinition
-%
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\renewcommand{\headrulewidth}{1.5pt} 	%obere Trennlinie
-\renewcommand{\headrule}{\color{darkblue} \hrule height\headrulewidth}
-%
-% Oben rechts die Namen der Teilnehmer der Gruppe
-\fancyhead[R]{%
-Maximilian Mühlfeld, Informatik MA, 580070,\\
-Malte Schmitz, Informatik MA,xxxxxx,\\
-Eike von Tils, Informatik MA,xxxxxx}
-%
-%Oben Links das Fach und darunter die Nummer des ï¿½bungsblattes
-\fancyhead[L]{\Large{\textbf{\textcolor{darkblue}{Artificial Life}}}\normalsize \\ Programmierprojekt}
-\fancyfoot[C]{\textcolor{black}{Seite \thepage}}
-%
-% Die ï¿½bungsgruppe oben in der Mitte
-\fancyhead[C]{}
-\renewcommand{\footrulewidth}{1.5pt} 	%untere Trennlinie
-\renewcommand{\footrule}{\color{black} \hrule height\footrulewidth \vskip\footruleskip}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%								      %%%%%%%%%%%%%%
-%%%%%%%%%%           Hier beginnt das Dokument          %%%%%%%%%%%%%%
-%%%%%%%%%%								      %%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{courier}
+
+% headings without numbers
+\setcounter{secnumdepth}{0}
+
+\usepackage{csquotes}
+\usepackage{listings}
+\lstset{%
+  basicstyle=\ttfamily,%
+  numbers=none,%
+  showstringspaces=false,%
+  upquote=true}
+\usepackage[toc]{multitoc}
+\usepackage{paralist}
+
+\title{Schlangenwürfel}
+\subtitle{Programmierprojekt in Artificial Life}
+\author{Maximilian Mühlfeld \and Malte Schmitz \and Eike von Tils}
+
 \begin{document}
-\section{Einleitung}
-Das Ziel des Versuches war es, anhand des Beispieles des Snacecubes einen Evolutionären ( Genetischen ) Algorithmus zu implementieren. In unserem Fall handelt es sich bei den Individuen des Algorithmus um ''snakes'' ( Schlangen). Diese werden durch einen String repräsentiert, der für jedes Glied der Schlange die Richtung angibt, in der das Folgeglied zu finden ist. Da die Schlange sich im 2D aufhält, gibt es die Richtungen I ( geradeaus), R ( rechts ) und L ( links). Die Fitness der Schlange wird aus einer Energiefunktion bezogen auf ihre Form und Lage im Raum berechnet.\\
-Hierzu wurde ein Algorithmus nach dem folgenden Schema entwickelt:
-\begin{enumerate}
- \item   Initiale Population erzeugen 
-\item Bis maximale Epoche oder minimale Energie erreicht wird, wiederhole:
-\begin{enumerate}
-    \item    Evaluation
-     \item   Selektion
-     \item   Reproduktion
-\end{enumerate}
-\end{enumerate}
-\subsection{Initiale Population erzeugen}
-Die Initiale Population besteht bei unserem Problem aus einer Menge von zufällig erstellten Schlangen. Eine Schlange wird durch einen Bitstring repräsentiert. Da die Position der 'I'-Glieder der Schlange konstant bleibt, sind nur die Richtungen 'R' und 'L' von Bedeutung. Wir codieren diese Richtungen als Richtungsänderungen bezüglich der vorherigen Position. Eine 1 steht hierbei für Richtungsänderung, eine 0 für gleichbleibende Richtung. Beginn ist immer eine Rechtsdrehung.
-\subsection{Evaluation}
-Die Berechnung der Fitness zu jedem Individuum erfolgt aus zwei Energiefunktionen, $E_a$ und $E_b$ , nach Aufgabenstellung. \\
-$E_a$ berechnet hierbei den Durchmesser des kleinsten Kreises auf der Ebene, der die Schlange umschließt.\\
-$E_b$ berechnet die gesamte Fläche aller Löcher die die Schlange bildet.\\
-Die genauere Erläuterung zur Implementierung folgt bei der Funktionsbeschreibung.
-\subsection{Selektion}
-Die Selektion erfolgt als zufällige Auswahl von Individuen der aktuellen Population. Die Wahrscheinlichkeit, das ein Individuum gewählt wird, ist hierbei von der Fitnessfunktion abhängig. Individuen mit höherer Fitness werden dabei bevorzugt.
-\subsection{Reproduktion}
-Reproduktion wird durch 1. Mutation und 2. Rekombination ausgeführt.
-\begin{enumerate}
-\item Mutation erfolgt durch das zufällige Kippen einer zufälligen Anzahl an Bits im Bitstring. Durch die gewählte Kodierung ist sichergestellt, das alle Folgenden Gelenke mitgedreht werden.
-\item Rekombination wird durch das zufälligen Wählen eines Einsprungpunktes im Bitstring initiiert. Die beiden, ebenfalls zufällig gewählten, Individuen werden an den Entsprechenden Stellen gekappt. Ein neues Individuum wird dann geboren, bestehend aus einem Teil des ersten Individuums bis zum Einsprungpunkt und dem zweiten Teil des zweiten Individuums ab dem Einsprungpunkt.
-\end{enumerate}
-\newpage
-\section{Funktionsbeschreibung}
+  \maketitle
+  \tableofcontents
 
-Im Folgenden wird auf die einzelnen Funktionen und Klassen eingegangen.
-\subsection{class Point}
-Die Klasse Point ist eine Hilfsklasse, die zur Repräsentation eines Punktes im 2D Raum mit den Koordinaten x und y dient.\\
-Sie verfügt im Wesentlichen über folgende Methoden:
-\begin{itemize}
-\item +(other)\\
-Die Methode + addiert zwei Instanzen von Point. Hierbei wird jeweilts auf die Koordinaten x und y die der Übergebenen Instanz addiert, und eine neue Instanz zurückgegeben.
-\item rotate!(d)\\
-Rotiert die Koordinaten nach links ( L ) oder rechts ( R ). Die Rotation erfolgt hierbei jeweils um 90$^\circ$
-\item .min(a,b) bzw. .max(a,b)\\
-Bestimmt die minimale bzw. maximale Lage eines Puntes im Raum bezüglich der Koordinatenwerte x und y.
-\end{itemize}
-
-\subsection*{class snake}
-Die Klasse snake dient zur Repräsentation einer Schlange auf einem 2D Gitter. Zusätzlich beinhaltet diese Klasse die implementierten Energiefunktionen.
-\begin{itemize}
-\item (to\_ board)\\
-Hier wird versucht die Schlange auf ein 2D Gitter zu legen. Kommt es zu Überschneidungen, so wird nill zurückgegeben. Ansonsten das Board mit Schlange. Das zurückgegebene Board ist zudem minimal groß.
-\item (to\_ String) \\
-Ersetzt die Kodierte Darstellung der Schlange ( 1 für Richtungsänderung, 0 für Gleichbleibend ) durch die Richtungsangaben R und L.
-\item (energy\_ a) \\
-Berechnet die Energiefunktion anhand der Größe des Boardes auf dem die Schlange liegt. Der Durchmesser des kleinsten Kreises ist identisch mit der Diagonalen des Boardes. Diese wird mithilfe des Satzes von Pythagoras berechnet und zurückgegeben.
-\item (energy\_ b) \\
-Berechnet die Energiefunktion anhand der Anzahl der Löcher. Hierzu wird das Board um die Schlange herum mit einem Flooding Algorithmus gefüllt. Alle Stellen auf dem Board, die dann noch leer sind, sind Löcher die von der Schlange umschlossen sind.
-Die Anzahl dieser Stellen wird zurückgegeben.
-\item (energy\_ c) \\
-Invertiert die Energiefunktion energy\_ b, damit eine minimierung zu einer maximal großen Lochfläche führt.
-\end{itemize}
-
-\subsection{class Evolution}
-Die Klasse Evolution implementiert die Funktionalität des Evolutionären Algorithmus.
-\begin{itemize}
-\item (start)\\
-Die Methode erzeugt eine zufällige Population von snakes mit vorgegebener Anzahl an Individuen.
-\item (crossover)\\
-Erzeugt neue Individuen durch Crossover. Hierzu wird ein zufälliger Einsprungpunkt gewählt an dem der Crossover stattfindet.
-\item (mutation) \\
-Erzeugt neue Individuen mit zufälligen Mutationen. Zuerst wird hierzu eine Bitmaske erstellt, die pro Bitstelle mit einer vorgegebenen Wahrscheinlichkeit eine 1 entählt. Diese wird dann mit der Kodierten Schlange xor genommen, so das ein bit gekippt wird, wenn die Maske 1 ist.
-\item (step)\\
-Führt einen Kompletten Iterationsschritt aus. Durch Aufruf von crossover und mutation werden neue Individuen erzeugt.\\ Anschließend werden diese nach ihrer Energie, gewichtet mit einer Zufallszahl, sortiert.\\
-Von den so sortierten werden die alle bis zu der vorgegebenen Populationsgröße gewählt.
-\item (iterate)\\
-Diese Methode startet die komplette Berechnung des Algorithmus. Sie ruft die start methode auf und dann in jeder Iteration einmal step. Sie iteriert solange, bis entweder die maximale Anzahl erreicht wurde, oder eine Energiegrenze unterschritten wurde.
-\item (bear)\\
-Erzeugt ein neues Individuum bestehend aus dem Kodierten Bitstring und dem Wert der Energiefunktion.
-\end{itemize}
-
-\subsection{snake\_ evolution}
-Das Skript erzeugt eine neue Schlange und setzt die Parameter des Algorithmus. Es startet anschließend den Algorithmus und gibt die Ergebnisse aus. \\
-Die Parameter sind hierbei:
-\begin{itemize}
-\item length = Länge der Schlange
-\item energy = Zu benutzende Energiefunktion
-\item size = Größe einer Population
-\item crossover = Anzahl an crossover Schritten pro Iteration
-\item mutation = Anzahl an Mutationsschritten pro Iteration
-\item flip = Wahrscheinlichkeit das ein Bit bei der Mutation gekippt wird
-\item selection =  Anteil der Zufallskomponente bei der Selektion nach Fitness der Individuen ( 0 bis 1 )
-\item n = Maximale Anzahl an Iterationen
-\item energy = Maximale zu erreichende Energie bei der Minimierung
-\item logging = Flag ob Ausgabe erzeugt wird oder nicht.
-\end{itemize}
-
-\section{Durchführung}
-Das Programm wird auf der Kommandozeile durch den Befehl ''ruby snake\_ evolution.rb'' gestartet.\\
-Die Ausgabe besteht aus der Anzahl an Iterationen, der endgültigen Population sowie einer Liste aller entstandenen Individuen ( 1 pro Energielevel ). Zum Ende ist die Schlange auf ihrem 2D Gatter gezeichnet.
-\subsection{Energiefunktion a)} 
-gewählte Parameter:
-\begin{itemize}
-\item length = 27
-\item energy = energy\_ a
-\item size = 15
-\item crossover = 5
-\item mutation = 15
-\item flip = 0.3
-\item selection =  0.5
-\item n = 10000
-\item energy = 9
-\item logging = true
-\end{itemize}
-\begin{lstlisting}
-number of iterations:
-52
-
-final population:
-8.602325	1110110110010010	IILRLILRILLRILILLRRIRILILII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-9.899495	1111100101011010	IILRLIRLILLRIRILLRLILIRIRII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-9.899495	0011100101011010	IIRRLIRLILLRIRILLRLILIRIRII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-9.899495	1111100101011010	IILRLIRLILLRIRILLRLILIRIRII
-9.899495	1111100101011010	IILRLIRLILLRIRILLRLILIRIRII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-10.000000	1011100111011011	IILLRILRIRRLIRILLRLILIRILII
-14.212670	1111010101111010	IILRLIRRILLRIRILRLRIRILILII
-14.866069	1011101111110101	IILLRILRIRLRILIRLRRILILIRII
-
-all energies and first found individual with that energy:
-8.602325	1110110110010010	IILRLILRILLRILILLRRIRILILII
-9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
-10.000000	0111101101101010	IIRLRILRIRLRIRILRRLILIRIRII
-...
-17.804494	0110101111101011	IIRLRIRLILRLIRILRRLILIRILII
-Inf	1011000010010101	IILLRILLILLLIRIRRLLIRIRILII
-
-fittest individual in final population:
-8.602325	1110110110010010	IILRLILRILLRILILLRRIRILILII
-
-  LL 
-LIRI 
-IRRRL
-LLI I
-LIRRL
-IIIL 
-LIIX 
-\end{lstlisting}
-
-\subsection{Energiefunktion c ( Logisch b)} 
-gewählte Parameter:
-\begin{itemize}
-\item length = 27
-\item energy = energy\_ c
-\item size = 15
-\item crossover = 5
-\item mutation = 15
-\item flip = 0.3
-\item selection =  0.5
-\item n = 10000
-\item energy = -15
-\item logging = true
-\end{itemize}
-\begin{lstlisting}
-number of iterations:
-71
-
-final population:
--15.000000	0010111101111011	IIRRLILRILRLILIRLRLILIRILII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
--10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
--10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
--10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
--10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
--10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
--10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
--10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
-
-all energies and first found individual with that energy:
--15.000000	0010111101111011	IIRRLILRILRLILIRLRLILIRILII
--13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
-...
--1.000000	1101110100111110	IILRRILRILLRIRIRLRLIRILILII
-0.000000	1011101011010011	IILLRILRIRLLIRILLRRIRILIRII
-
-fittest individual in final population:
--15.000000	0010111101111011	IIRRLILRILRLILIRLRLILIRILII
-
-  XIIL  
-IIR  I  
- LR  RIL
- I     I
- LR   RL
-  I  RL 
-  LR I  
-   LIL  
-\end{lstlisting}
-
+  \section{Einleitung}
+    Das Ziel des Versuches war es, anhand des Beispiels des Schlangenwürfels einen
+    evolutionären (genetischen) Algorithmus zu implementieren. In unserem Fall
+    handelt es sich bei den Individuen des Algorithmus um Verdrehungen
+    eines Schlangenwürfels in der Ebene. Diese werden durch einen String
+    repräsentiert, der für jedes Glied der Schlange die Richtung angibt, in der
+    das Folgeglied zu finden ist. Da die Schlange sich im 2D aufhält, gibt es die
+    Richtungen \texttt{I} (geradeaus), \texttt{R} (rechts) und
+    \texttt{L} (links). Die Energie einer Konfiguration wird aus einer
+    Energiefunktion bezogen auf ihre Form und Lage im Raum berechnet.\\
+    Hierzu wurde ein Algorithmus nach dem folgenden Schema entwickelt:
+    \begin{enumerate}
+      \item initiale Population erzeugen 
+      \item Bis maximale Epoche oder minimale Energie erreicht wird, wiederhole:
+        \begin{enumerate}
+          \item Evaluation
+          \item Selektion
+          \item Reproduktion
+        \end{enumerate}
+      \end{enumerate}
+  
+  \subsection[initiale Population]{initiale Population erzeugen}
+    Die Initiale Population besteht bei unserem Problem aus einer Menge von
+    zufällig erstellten Schlangen. Eine Schlange wird durch einen
+    Bitstring repräsentiert. Da die Position der \texttt{I}-Glieder der Schlange
+    konstant bleibt, sind nur die Richtungen \texttt{R} und \texttt{L} von
+    Bedeutung. Wir codieren diese Richtungen als Richtungsänderungen
+    bezüglich der vorherigen Position. Eine 1 steht hierbei für Richtungsänderung,
+    eine 0 für gleich bleibende Richtung. Beginn ist immer eine Rechtsdrehung
+    \texttt{R}.
+    
+  \subsection{Evaluation}
+    Zur Bewertung der Konfigurationen kommen zwei unterschiedliche
+    Energiefunktionen $E_a$ und $E_b$ zum Einsatz.
+    \begin{itemize}
+    \item $E_a$ berechnet hierbei den Durchmesser des kleinsten Kreises auf der
+      Ebene, der die Schlange umschließt.
+    \item $E_b$ berechnet die gesamte Fläche aller Löcher, die die Schlange bildet.
+    \end{itemize}
+    Die genauere Erläuterung zur Implementierung folgt bei der Funktionsbeschreibung.
+    
+  \subsection{Selektion}
+    Die Selektion erfolgt als zufällige Auswahl von Individuen der aktuellen
+    Population. Die Wahrscheinlichkeit, das ein Individuum gewählt wird, ist
+    hierbei von der Energiefunktion abhängig. Individuen mit niedrigerer Energie
+    werden dabei bevorzugt.
+    
+  \subsection{Reproduktion}
+    Reproduktion wird 1. durch Mutation und 2. durch Rekombination ausgeführt.
+    
+    \begin{enumerate}
+      \item Mutation erfolgt durch das zufällige Kippen einer zufälligen Anzahl an
+        Bits im Bitstring. Durch die gewählte Kodierung ist sichergestellt, das
+        alle folgenden Gelenke mit gedreht werden, sodass die Mutation eines Bits
+        genau dem verdrehen eines Gelenks in die andere Richtung entspricht.
+      \item Rekombination wird durch das zufälligen Wählen eines Einsprungpunktes
+        im Bitstring initiiert. Die beiden, ebenfalls zufällig gewählten,
+        Individuen werden an den entsprechenden Stellen gekappt. Ein neues
+        Individuum wird dann geboren, bestehend aus einem Teil des ersten
+        Individuums bis zum Einsprungpunkt und dem zweiten Teil des
+        zweiten Individuums ab dem Einsprungpunkt.
+    \end{enumerate}
+    
+  \section{Funktionsbeschreibung}
+    Die Implementierung erfolgte in Ruby. Im folgenden wird auf die einzelnen
+    Funktionen und Klassen eingegangen.
+ 
+  \subsection{Klasse \lstinline-Point-}
+    Die Klasse \lstinline-Point- ist eine Hilfsklasse, die zur Repräsentation eines
+    Punktes im 2D-Raum mit den Koordinaten x und y dient.
+    Sie verfügt im Wesentlichen über folgende Methoden:
+    \begin{itemize}
+      \item \lstinline-+(other)-\\
+        Die Methode \lstinline-+- addiert zwei Instanzen von \lstinline-Point-. Hierbei
+        wird jeweils auf die Koordinaten \lstinline-x- und \lstinline-y- die der
+        übergebenen Instanz addiert, und eine neue Instanz zurückgegeben.
+      \item \lstinline-rotate!(d)-\\
+        Rotiert die Koordinaten nach links (\texttt{L}) oder rechts (\texttt{R}).
+        Die Rotation erfolgt hierbei jeweils um 90$^\circ$.
+      \item \lstinline-min(a,b)- bzw. \lstinline-max(a,b)-\\
+        Bestimmt die minimale bzw. maximale Lage eines Punktes im Raum bezüglich
+        der Koordinatenwerte x und y.
+    \end{itemize}
+    
+  \subsection{Klasse \lstinline-Snake-}
+    Die Klasse \lstinline-Snake- dient zur Repräsentation einer Schlange auf einem
+    2D-Gitter. Zusätzlich beinhaltet diese Klasse die implementierten
+    Energiefunktionen.
+    \begin{itemize}
+      \item \lstinline-to_board-\\
+        Hier wird versucht die Schlange auf ein 2D-Gitter zu legen. Kommt es zu
+        Überschneidungen, so wird \lstinline-nil- zurückgegeben. Ansonsten das Board
+        mit Schlange. Das zurückgegebene Board ist zudem minimal groß.
+      \item \lstinline-to_string-) \\
+        Ersetzt die kodierte Darstellung der Schlange (1 für Richtungsänderung,
+        0 für gleiche Richtung) durch die Richtungsangaben \texttt{I}, \texttt{R}
+        und \texttt{L} anhand eines Templates in \lstinline-snake_static-, indem
+        \texttt{R} und \texttt{L} durch \texttt{X} ersetzt sind.
+      \item \lstinline-energy_a- \\
+        Berechnet die Energiefunktion anhand der Größe des Boards auf dem die
+        Schlange liegt. Der Durchmesser des kleinsten Kreises ist identisch mit der
+        Diagonalen des Boards. Diese wird mithilfe des Satzes von Pythagoras
+        berechnet und zurückgegeben.
+      \item \lstinline-energy_b- \\
+        Berechnet die Energiefunktion anhand der Anzahl der Löcher. Hierzu wird
+        das Board um die Schlange herum mit einem Flood-Filling-Algorithmus gefüllt.
+        Alle Stellen auf dem Board, die dann noch leer sind, sind Löcher die von
+        der Schlange umschlossen sind. Die Anzahl dieser Stellen wird
+        zurückgegeben.
+      \item \lstinline-energy_c- \\
+        Invertiert die Energiefunktion \lstinline-energy_b-, damit eine
+        Minimierung der Energie zu einer maximal großen Lochfläche führt.
+    \end{itemize}
+  
+  \subsection{Klasse \lstinline-Evolution-}
+    Die Klasse Evolution implementiert die Funktionalität eines
+    evolutionären Algorithmus.
+    \begin{itemize}
+      \item \lstinline-start-\\
+        Die Methode erzeugt eine zufällige Population von Individuen als Binärzahl
+        fester Länge mit vorgegebener Anzahl an Individuen.
+      \item \lstinline-crossover-\\
+        Erzeugt neue Individuen durch Crossover. Hierzu wird ein zufälliger
+        Einsprungpunkt gewählt an dem der Crossover stattfindet (s.\,o.).
+      \item \lstinline-mutation- \\
+        Erzeugt neue Individuen mit zufälligen Mutationen.
+        Zuerst wird hierzu eine Bitmaske erstellt, die pro Bitstelle mit einer
+        vorgegebenen Wahrscheinlichkeit eine 1 enthält. Diese wird dann mit der
+        Kodierten Schlange per \texttt{xor} verrechnet, so dass ein Bit an den
+        Stellen gekippt wird, wo die Maske 1 ist.
+      \item \lstinline-step-\\
+        Führt einen kompletten Iterationsschritt aus. Durch Aufruf von
+        \lstinline-crossover- und \lstinline-mutation- werden neue
+        Individuen erzeugt.
+        
+        Anschließend werden diese nach ihrer Energie, gewichtet mit einer
+        Zufallszahl, sortiert. Aus dieser sortierten Folge werden die ersten
+        Individuen bis zur vorgegebenen Populationsgröße gewählt. Alle
+        anderen Individuen sterben aus.
+      \item \lstinline-iterate- \\
+        Diese Methode startet die komplette Berechnung des Algorithmus.
+        Sie ruft die Methode \lstinline-start- auf und dann in jeder
+        Iteration einmal \lstinline-step-. Sie iteriert solange, bis entweder die
+        maximale Anzahl erreicht wurde, oder eine Energiegrenze unterschritten
+        wurde.
+      \item \lstinline-bear-\\
+        Erzeugt ein neues Individuum bestehend aus dem kodierten Bitstring und
+        dem Wert der Energiefunktion.
+    \end{itemize}
+  
+  \subsection[Skript Evolution]{Skript \lstinline-snake_evolution.rb-}
+    Dieses Skript erzeugt eine neue Schlange und setzt die Parameter des
+    Algorithmus. Es startet anschließend den Algorithmus und gibt die Ergebnisse
+    aus. Die Parameter sind dabei im einzelnen:
+    \begin{itemize}
+      \item \lstinline-length-\\
+        Anzahl der Gelenke der Schlange.
+      \item \lstinline-energy-\\
+        Zu benutzende Energiefunktion.
+      \item \lstinline-size-\\
+        Größe einer Population.
+      \item \lstinline-crossover-\\
+        Anzahl an durch Crossover zu erzeugenden
+        Individuen pro Iteration.
+      \item \lstinline-mutation-\\
+        Anzahl an durch Mutationen zu erzeugenden
+        Individuen pro Iteration.
+      \item \lstinline-flip-\\
+        Wahrscheinlichkeit, dass ein Bit bei der Mutation
+        gekippt wird.
+      \item \lstinline-selection-\\
+        Anteil der Zufallskomponente bei der
+        Selektion nach Energie der Individuen (Faktor aus dem
+        Bereich von 0 bis 1).
+      \item \lstinline-n-\\
+        Maximale Anzahl an Iterationen.
+      \item \lstinline-energy-\\
+        Minimale Energie, bei deren Unterschreitung
+        die Iteration früher beendet werden kann.
+      \item \lstinline-logging-\\
+        Flag, das angibt, ob ein Log aller
+        Energielevel erzeugt wird.
+    \end{itemize}
+  
+  \subsection[Skript Brute-Force]{Skript \lstinline-snake_bruteforce.rb-}
+    Dieses Skript erzeugt die gleiche Schlange, verwendet aber zum Vergleich
+    einen Brute-Force-Ansatz, bei dem über alle möglichen Konfigurationen iteriert
+    wird. Auf dieses Weise wird das absolute Energie-Minimum sicher gefunden, sodass
+    die Ergebnisse des evolutionären Algorithmus besser beurteilt werden können.
+  
+  \section{Durchführung}
+    Das Programm wird auf der Kommandozeile durch den Befehl
+    \begin{lstlisting}[gobble=6]
+      ruby snake_evolution.rb
+    \end{lstlisting}
+    gestartet.
+    
+    Die Ausgabe besteht aus der Anzahl an Iterationen, der endgültigen
+    Population sowie einer Liste aller Energielevel, die erreicht wurden und
+    jeweils des ersten Individuums mit dieser Energie.
+    Am Ende wird die Schlange auf ihrem 2D Gatter gezeichnet.
+  
+    Als Schlange wird \texttt{IIXXXIXXIXXXIXIXXXXIXIXIXII} verwendet.
+    
+  \subsection{Energiefunktion $E_a$} 
+    Es werden die folgenden Parameter verwendet:
+    \begin{compactitem}[--]
+      \item \lstinline-length = 27-
+      \item \lstinline-energy = energy_a-
+      \item \lstinline-size = 15-
+      \item \lstinline-crossover = 5-
+      \item \lstinline-mutation = 15-
+      \item \lstinline-flip = 0.3-
+      \item \lstinline-selection =  0.5-
+      \item \lstinline-n = 10000-
+      \item \lstinline-energy = 9-
+      \item \lstinline-logging = true-
+    \end{compactitem}
+  
+    Wir erhalten folgendes Ergebnis:
+    \begin{lstlisting}[gobble=6,basicstyle=\small\ttfamily]
+      number of iterations:
+      52
+      
+      final population:
+      8.602325	1110110110010010	IILRLILRILLRILILLRRIRILILII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      9.899495	1111100101011010	IILRLIRLILLRIRILLRLILIRIRII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      9.899495	0011100101011010	IIRRLIRLILLRIRILLRLILIRIRII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      9.899495	1111100101011010	IILRLIRLILLRIRILLRLILIRIRII
+      9.899495	1111100101011010	IILRLIRLILLRIRILLRLILIRIRII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      10.000000	1011100111011011	IILLRILRIRRLIRILLRLILIRILII
+      14.212670	1111010101111010	IILRLIRRILLRIRILRLRIRILILII
+      14.866069	1011101111110101	IILLRILRIRLRILIRLRRILILIRII
+      
+      all energies and first found individual with that energy:
+      8.602325	1110110110010010	IILRLILRILLRILILLRRIRILILII
+      9.899495	0111100101011010	IIRLRILRIRRLILIRRLRIRILILII
+      10.000000	0111101101101010	IIRLRILRIRLRIRILRRLILIRIRII
+      ...
+      17.804494	0110101111101011	IIRLRIRLILRLIRILRRLILIRILII
+      Inf	1011000010010101	IILLRILLILLLIRIRRLLIRIRILII
+      
+      fittest individual in final population:
+      8.602325	1110110110010010	IILRLILRILLRILILLRRIRILILII
+      
+        LL 
+      LIRI 
+      IRRRL
+      LLI I
+      LIRRL
+      IIIL 
+      LIIX 
+    \end{lstlisting}
+    
+    Man erkennt deutlich, dass hier bereits nach wenigen Iterationen
+    eine sehr kompakte Konfiguration der Schlange erreicht wurde.
+    Der Vergleich mit den Ergebnissen des Brute-Force-Skriptes zeigt,
+    dass mit einer Energie von etwa 8.602 ein globales Optimum gefunden
+    wird. 
+  
+  \subsection{Energiefunktion $E_b$} 
+    Es werden die folgenden Parameter verwendet:
+    \begin{compactitem}[--]
+      \item \lstinline-length = 27-
+      \item \lstinline-energy = energy_c-
+      \item \lstinline-size = 15-
+      \item \lstinline-crossover = 5-
+      \item \lstinline-mutation = 15-
+      \item \lstinline-flip = 0.3-
+      \item \lstinline-selection = 0.5-
+      \item \lstinline-n = 10000-
+      \item \lstinline|energy = -15|
+      \item \lstinline-logging = true-
+    \end{compactitem}
+    
+    Wir erhalten folgendes Ergebnis:
+    \begin{lstlisting}[gobble=6,basicstyle=\small\ttfamily]
+      number of iterations:
+      71
+      
+      final population:
+      -15.000000	0010111101111011	IIRRLILRILRLILIRLRLILIRILII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      -10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
+      -10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
+      -10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
+      -10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
+      -10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
+      -10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
+      -10.000000	0110111101010010	IIRLRIRLIRLRIRILLRRIRILILII
+      
+      all energies and first found individual with that energy:
+      -15.000000	0010111101111011	IIRRLILRILRLILIRLRLILIRILII
+      -13.000000	0110111101111011	IIRLRIRLIRLRIRILRLRIRILIRII
+      ...
+      -1.000000	1101110100111110	IILRRILRILLRIRIRLRLIRILILII
+      0.000000	1011101011010011	IILLRILRIRLLIRILLRRIRILIRII
+      
+      fittest individual in final population:
+      -15.000000	0010111101111011	IIRRLILRILRLILIRLRLILIRILII
+      
+        XIIL  
+      IIR  I  
+       LR  RIL
+       I     I
+       LR   RL
+        I  RL 
+        LR I  
+         LIL  
+    \end{lstlisting}
+    
+    An der gezeichneten Schlange erkennt man deutlich, dass eine Schleife mit
+    großem Loch gefunden wurde. Bei dieser Energiefunktion ist das Ergebnis
+    aufgrund der zerklüfteten Energielandschaft (gut erkennbar an den Sprüngen
+    in den Energien der Konfigurationen in der finalen Population) allerdings
+    stärker von den zufälligen Startwerten abhängig. Entsprechend kann es sehr
+    lange dauern -- in ganz schlechten Läufen auch unendlich lange -- bis
+    das globale Optimum von $-15$ erreicht wird. 
 \end{document}
