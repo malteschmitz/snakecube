@@ -20,6 +20,12 @@
 \usepackage[toc]{multitoc}
 \usepackage{paralist}
 
+\usepackage{hyperref}
+\hypersetup{breaklinks=true,
+            pdfborder={0 0 0},
+            ngerman,
+            pdfhighlight={/N}}
+
 \title{Schlangenwürfel}
 \subtitle{Programmierprojekt in Artificial Life}
 \author{Maximilian Mühlfeld \and Malte Schmitz \and Eike von Tils}
@@ -92,7 +98,12 @@
     \end{enumerate}
     
   \section{Funktionsbeschreibung}
-    Die Implementierung erfolgte in Ruby. Im folgenden wird auf die einzelnen
+    Die Implementierung erfolgte in Ruby.
+    Der Quelltext und dieses Dokument stehen unter der
+    MIT-Lizenz\footnote{\url{http://www.opensource.org/licenses/MIT}}
+    und wurden auf
+    GitHub\footnote{\url{https://github.com/malteschmitz/snakecube}}
+    veröffentlicht. Im folgenden wird auf die einzelnen
     Funktionen und Klassen eingegangen.
  
   \subsection{Klasse \lstinline-Point-}
